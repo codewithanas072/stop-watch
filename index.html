@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Circular Stopwatch</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Circle Stopwatch Styling */
+        .stopwatch-circle {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border: 6px solid #00d2ff;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4), inset 0 0 25px rgba(0, 210, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .stopwatch-circle #timer {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Controls / Buttons Styling */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn {
+            border: none;
+            outline: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(80%);
+        }
+
+        /* Button Colors */
+        #start {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        #store {
+            background: linear-gradient(135deg, #f857a6, #ff5858);
+        }
+
+        #stop {
+            background: linear-gradient(135deg, #ff9900, #ff5500);
+        }
+
+        #clear {
+            background: linear-gradient(135deg, #8e9eab, #eef2f3);
+            color: #333;
+        }
+
+        /* Lap List Styling */
+        .lap-container {
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .lap-container::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .lap-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        #listlap {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #listlap li {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            border-left: 4px solid #00d2ff;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #listlap li::before {
+            content: "Lap Record";
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Circular Stopwatch Display -->
+        <div class="stopwatch-circle">
+            <h1 id="timer">00:00:00</h1>
+        </div>
+
+        <!-- Action Buttons with FontAwesome Icons -->
+        <div class="controls">
+            <button id="start" class="btn" title="Start">
+                <i class="fa-solid fa-play"></i>
+            </button>
+            <button id="store" class="btn" title="Store Lap">
+                <i class="fa-solid fa-bookmark"></i>
+            </button>
+            <button id="stop" class="btn" title="Stop">
+                <i class="fa-solid fa-pause"></i>
+            </button>
+            <button id="clear" class="btn" title="Clear">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+        </div>
+
+        <!-- Lap History List -->
+        <div class="lap-container">
+            <ul id="listlap"></ul>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
